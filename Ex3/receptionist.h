@@ -5,6 +5,7 @@
 #include "windows.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdbool.h>
 
 //structs ----------------------------------------------------------------------
 typedef struct {
@@ -16,8 +17,11 @@ typedef struct {
 }Room; 
 typedef struct {
 
-	char  *name; // name of the guest
+	char *name; // name of the guest
 	int money; // amount of monet guest has 
+	bool checked_in;
+	Room *designated_room;
+	int	day;
 	 
 
 }Guest;
@@ -32,8 +36,8 @@ typedef struct {
 
 // Constants  ------------------------------------------------------------------
 
-#define NUM_OF_THREADS 3
-#define MAX_STRING 100
+#define NUM_OF_THREADS 1
+#define MAX_STRING 500
 static const int TIMEOUT_IN_MILLISECONDS = 10 * 1000;
 static const int PRODUCER_WAIT_TIME_IN_MILISECONDS = 250;
 static const int CONSUMER_WAIT_TIME_IN_MILISECONDS = 500; /* Unequal wait times make the demonstration clearer */
@@ -49,12 +53,10 @@ static int items = 20;
 // Function Declarations -------------------------------------------------------
 
 static void reception();
-static DWORD Producer(LPVOID Dummy);
 static void ReportErrorAndEndProgram();
-static int produce_item();
-static void insert_item(int item);
-static int remove_item();
-static void consume_item(int item);
-
-
+static void check_in(Guest *guest);
+static void check_out(Guest *guest);
+static Hotel* init_hotel(char path);
+static void init_rooms(char path, Room *rooms);
+static Guest* init_guests(Room *rooms, Guest *guest);
 #endif //__RECEPTIONIST_H__
