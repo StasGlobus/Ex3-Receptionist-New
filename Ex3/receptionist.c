@@ -71,11 +71,15 @@ static DWORD ChkRoomStatus(LPVOID lpParam)
 int main()
 {
 	Room *rooms=NULL;
+	Guest *guests = NULL;
 	char path[MAX_STRING] = { '\0' };
-	rooms = (Room*)malloc(sizeof(Room));
+	int guest_counter = 0, room_counter = 0;
+	rooms = (Room*)malloc(MAX_ROOMS*sizeof(Room)); // add here allocation check
+	guests = (Guest*)malloc(MAX_GUESTS * sizeof(Guest)); //// add here allocation check
 	strcpy(path,"C:\\Users\\stani\\OneDrive\\Documents\\Limudim\\OS");
-	init_rooms(path, rooms);
-	printf("%s\n", rooms->name);
+	room_counter = init_rooms(path, rooms);
+	guest_counter = init_guests(path, guests);
+
 	//reception();
 	getchar(); // stops the cmd window from closing
 }
@@ -196,7 +200,7 @@ static void check_out(Guest *guest)
 }
 
 
-static void init_rooms(char path[], Room *rooms) // create a semaphore for each room
+static int init_rooms(char *path, Room *rooms) // create a semaphore for each room
 {
 	//Room *rooms;
 	FILE *ptr;
@@ -218,20 +222,41 @@ static void init_rooms(char path[], Room *rooms) // create a semaphore for each 
 			(rooms + i)->price= atoi(price);
 			(rooms + i)->size = atoi(size);
 			i++;
-			rooms = (Room*)realloc(rooms, sizeof(Room));
+			//rooms = (Room*)realloc(rooms, (i+1)*sizeof(Room));
 			Room_default(rooms + i);
 		}
 	}
 	
 	
-	//return rooms;
+	return i;
 }
 
-static Guest* init_guests(char path) // create a thread for each guest
+static int init_guests(char *path, Guest *guests) // create a thread for each guest
 {
-	Guest *guests;
+	FILE *ptr;
+	int i = 0;
+	char adress[MAX_STRING] = { '\0' };
+	//rooms = (Room*)malloc(sizeof(Room));// multiply by the amount of ID's in the filr
+	Guest_default(guests);
+	memcpy(adress, path, MAX_STRING);
+	strcat(adress, "\\names.txt");
+	ptr = fopen(adress, "r");
+	if (NULL == ptr) {
+		perror("Could not open rooms.txt");
+		return 1;
+	}
+	else {
+		while (!feof(ptr)) {
+			char money[5] = { '\o' };
+			fscanf(ptr, "%s %s", (guests + i)->name, money);
+			(guests + i)->money =atoi(money);
+			i++;
+			//rooms = (Room*)realloc(rooms, (i+1)*sizeof(Room));
+			Guest_default(guests + i);
+		}
+	}
 
-	return guests;
+	return i;
 }
 static Hotel* init_hotel(Room *rooms, Guest *guest) // match designated room for each guest
 {

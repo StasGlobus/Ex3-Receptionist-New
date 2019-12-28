@@ -38,6 +38,8 @@ typedef struct {
 
 #define NUM_OF_THREADS 1
 #define MAX_STRING 500
+#define MAX_ROOMS 5
+#define MAX_GUESTS 15
 static const int TIMEOUT_IN_MILLISECONDS = 10 * 1000;
 static const int PRODUCER_WAIT_TIME_IN_MILISECONDS = 250;
 static const int CONSUMER_WAIT_TIME_IN_MILISECONDS = 500; /* Unequal wait times make the demonstration clearer */
@@ -57,6 +59,6 @@ static void ReportErrorAndEndProgram();
 static void check_in(Guest *guest);
 static void check_out(Guest *guest);
 static Hotel* init_hotel(char path);
-static void init_rooms(char path, Room *rooms);
-static Guest* init_guests(Room *rooms, Guest *guest);
+static int init_rooms(char *path, Room *rooms);
+static int init_guests(char *path, Guest *guests);
 #endif //__RECEPTIONIST_H__
